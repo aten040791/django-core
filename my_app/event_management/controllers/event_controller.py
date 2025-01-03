@@ -4,6 +4,8 @@ from django.forms.models import model_to_dict
 import json
 from ..forms.event_form import EventForm
 from ..models import Event
+from django.views.decorators.http import require_POST, require_http_methods
+
 
 def all(request):
     events = Event.objects.all()
@@ -44,7 +46,8 @@ def show_querystring(request):
         },
         'message': 'ok'
     }, safe=False)
-    
+
+@require_POST
 @csrf_exempt
 def store(request):
     # request.POST form data
@@ -60,7 +63,8 @@ def store(request):
         'success': True,
         'message': 'ok'
     })
-    
+
+@require_POST
 @csrf_exempt
 def store_fillable(request):
     # Receive form request
@@ -82,3 +86,49 @@ def store_fillable(request):
         },
         'message': 'validation failed'
     })
+
+@require_http_methods(["PUT"])
+@csrf_exempt
+def update(request, event_id):
+    try:
+        event = Event.objects.get(event_id = event_id)
+    except Event.DoesNotExist: 
+        return JsonResponse({
+            'message': 'Model not found',
+            'success': False
+        }, status=404)
+        
+    form = EventForm(json.loads(request.body))
+    if form.is_valid():
+        event = form.save()
+        return JsonResponse({
+            'success': True,
+            'message': 'ok',
+            'data': {
+                'event': model_to_dict(event, exclude=['cover_image'])
+            }
+        })
+    return JsonResponse({
+        'success': False,
+        'data': {
+            'errors': form.errors
+        },
+        'message': 'Cannot save model'
+    })
+
+@require_http_methods(["DELETE"])
+@csrf_exempt
+def delete(request, event_id):
+    try:
+        event = Event.objects.get(event_id = event_id)
+        event.delete()
+        return JsonResponse({
+            'success': True,
+            'message': 'ok'
+        })
+    except Event.DoesNotExist:
+        return JsonResponse({
+            'message': 'Model not found',
+            'success': False
+        }, status=404)
+    
