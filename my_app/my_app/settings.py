@@ -13,8 +13,6 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from dotenv import load_dotenv
 
-load_dotenv(dotenv_path=os.path.dirname(os.path))
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_PATH = os.path.join(BASE_DIR, '.env')
@@ -36,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'event_management.apps.EventManagementConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -83,9 +82,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': os.getenv('MYSQL_DATABASE', 'XXX'),
         'USER': os.getenv('MYSQL_USERNAME', 'XXX'),
-        'PASS': os.getenv('MYSQL_PASSWORD', 'XXX'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'XXX'),
         'HOST': os.getenv('MYSQL_HOST', 'XXX'),
-        'PORT': os.getenv('MYSQL_PORT', 'XXX')
+        'PORT': os.getenv('MYSQL_PORT', 'XXX'),
     }
 }
 

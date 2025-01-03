@@ -1,7 +1,11 @@
 from django.urls import path
+from .controllers import event_controller
 
-from . import views
 
 urlpatterns = [
-    path("", views.index, name="index"), # index là tên hàm trong file views.py
+    path('api/events/', event_controller.all),
+    path('api/events/<int:event_id>', event_controller.show),
+    path('api/events/show', event_controller.show_querystring),
+    path('api/events/store', event_controller.store),
+    path('api/events/store_fillable', event_controller.store_fillable)
 ]
