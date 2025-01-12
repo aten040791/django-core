@@ -5,7 +5,8 @@ import json
 from ..forms.event_form import EventForm
 from ..models import Event
 from django.views.decorators.http import require_POST, require_http_methods
-
+from django.shortcuts import get_object_or_404
+from django.core.files.storage import FileSystemStorage
 
 def all(request):
     events = Event.objects.all()
@@ -46,21 +47,47 @@ def show_querystring(request):
         },
         'message': 'ok'
     }, safe=False)
+    
+def show_with_relationship(request, event_id):
+    try:
+        event = Event.objects.get(event_id=event_id)
+        cover_image = event.cover_image.name
+        event_data = model_to_dict(event, exclude=[''])
+        event_data['cover_image'] = cover_image
+        event_data['participants'] = list(event.participants.all().values())
+        return JsonResponse({
+            'success': True,
+            'data': event_data,
+            'message': 'ok'
+        })
+    except Event.DoesNotExist:
+        return JsonResponse({'success': False, 'message': 'Event not found'}, status=404)
 
 @require_POST
 @csrf_exempt
 def store(request):
     # request.POST form data
     body = request.POST
+    # Upload file
+    cover_image = request.FILES['cover_image']
+    # Upload file - Specify path
+    file_storage = FileSystemStorage(location='event_management/storage/event_covers', base_url='event_management/event_covers')
+    file_storage.save(cover_image.name, cover_image) # cover_image.name can change to any string file name (e.g. haha.jpg)
     # json.loads(request.body) for JSON data
-    Event.objects.create(
-        event_name=body.get('event_name'), 
+    event = Event.objects.create(
+        event_name= body.get('event_name'), 
         start_date=body.get('start_date'), 
         end_date=body.get('end_date'), 
-        cover_image = body.get('cover_image')
+        cover_image= cover_image.name
     )
+    event_dict = model_to_dict(event, exclude=['cover_image'])
+    # Get storage url
+    event_dict['cover_image'] = file_storage.url(cover_image) 
     return JsonResponse({
         'success': True,
+        'data': {
+            'event': event_dict
+        },
         'message': 'ok'
     })
 
@@ -68,15 +95,18 @@ def store(request):
 @csrf_exempt
 def store_fillable(request):
     # Receive form request
-    form = EventForm(json.loads(request.body))
+    form = EventForm(request.POST, files=request.FILES)
     if form.is_valid():
-        event = form.save()
+        event = form.save(commit=False)
+        event_dict = model_to_dict(event, exclude=['cover_image'])
+        event_dict['cover_image'] = event.cover_image.url
+        event.save()
         return JsonResponse({
             'success': True,
-            'message': 'ok',
             'data': {
-                'event': model_to_dict(event, exclude=['cover_image'])
-            }
+                'event': event_dict
+            },
+            'message': 'ok',
         })
     # Get form error
     return JsonResponse({
@@ -114,13 +144,13 @@ def update(request, event_id):
             'errors': form.errors
         },
         'message': 'Cannot save model'
-    })
+    }, status=522)
 
 @require_http_methods(["DELETE"])
 @csrf_exempt
 def delete(request, event_id):
     try:
-        event = Event.objects.get(event_id = event_id)
+        event = get_object_or_404(Event, event_id = event_id)
         event.delete()
         return JsonResponse({
             'success': True,

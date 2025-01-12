@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.files.storage import FileSystemStorage
 
 # Create your models here.
 class Event(models.Model):
@@ -6,7 +7,8 @@ class Event(models.Model):
     event_name = models.CharField(max_length=100)  # Event name
     start_date = models.DateTimeField()  # Start date
     end_date = models.DateTimeField()  # End date
-    cover_image = models.ImageField(upload_to='event_covers/', blank=True, null=True)  # Cover image (optional)
+    cover_image = models.ImageField(upload_to='event_management/storage/event_covers/', blank=True, null=True)  # Cover image (optional)
+        
     class Meta:
         db_table='events' 
 
@@ -26,3 +28,11 @@ class EventParticipant(models.Model):
         db_table='event_participant'
         unique_together = ('event', 'participant')  # Ensure unique pairs of Event and Participant
 
+class AuthUserApi(models.Model):
+    id = models.AutoField(primary_key=True)
+    email = models.CharField(max_length=150, null=False)
+    password = models.CharField(max_length=100, null=False)
+    
+    class Meta:
+        db_table = 'api_users'
+    

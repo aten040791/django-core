@@ -1,5 +1,7 @@
 from django import forms
 from ..models import Event
+import os
+from django.core.files.storage import FileSystemStorage
 
 class EventForm(forms.ModelForm):
     class Meta:
