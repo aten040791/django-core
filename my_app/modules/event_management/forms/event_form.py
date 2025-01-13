@@ -15,7 +15,7 @@ class EventForm(forms.ModelForm):
     def clean_event_name(self):
         event_name = self.cleaned_data.get('event_name')
         if len(event_name) < 3:
-            raise forms.ValidationError('message.minlength:3')
+            raise forms.ValidationError('message.custom')
         return event_name
     
     def clean_end_date(self):

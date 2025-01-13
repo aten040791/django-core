@@ -4,11 +4,11 @@ from django.forms.models import model_to_dict
 import json
 from ..forms.event_form import EventForm
 from ..models import Event
-from django.views.decorators.http import require_POST, require_http_methods
+from django.views.decorators.http import require_http_methods
 from django.shortcuts import get_object_or_404
 from django.core.files.storage import FileSystemStorage
 
-def all(request):
+def all():
     events = Event.objects.all()
     return JsonResponse({
         'success': True,
@@ -63,7 +63,7 @@ def show_with_relationship(request, event_id):
     except Event.DoesNotExist:
         return JsonResponse({'success': False, 'message': 'Event not found'}, status=404)
 
-@require_POST
+@require_http_methods(["POST"])
 @csrf_exempt
 def store(request):
     # request.POST form data
@@ -91,16 +91,15 @@ def store(request):
         'message': 'ok'
     })
 
-@require_POST
+@require_http_methods("POST")
 @csrf_exempt
 def store_fillable(request):
     # Receive form request
     form = EventForm(request.POST, files=request.FILES)
     if form.is_valid():
-        event = form.save(commit=False)
+        event = form.save(commit=True)
         event_dict = model_to_dict(event, exclude=['cover_image'])
         event_dict['cover_image'] = event.cover_image.url
-        event.save()
         return JsonResponse({
             'success': True,
             'data': {

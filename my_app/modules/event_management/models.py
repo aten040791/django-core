@@ -1,5 +1,4 @@
 from django.db import models
-import bcrypt
 from django.contrib.auth.hashers import check_password, make_password
 
 # Create your models here.
@@ -8,7 +7,8 @@ class Event(models.Model):
     event_name = models.CharField(max_length=100)  # Event name
     start_date = models.DateTimeField()  # Start date
     end_date = models.DateTimeField()  # End date
-    cover_image = models.ImageField(upload_to='event_management/storage/event_covers/', blank=True, null=True)  # Cover image (optional)
+    cover_image = models.ImageField(upload_to='modules/event_management/storage/event_covers/', blank=True, null=True)  # Cover image (optional)
+    cover_disk_storage=models.CharField(max_length=20, null=False, default="local")
         
     class Meta:
         db_table='events' 
@@ -43,7 +43,7 @@ class AuthUserApiManager(models.Manager):
 
 class AuthUserApi(models.Model):
     id = models.AutoField(primary_key=True)
-    email = models.CharField(max_length=150, null=False, unique=True)
+    email = models.EmailField(max_length=150, null=False, unique=True)
     password = models.CharField(max_length=100, null=False)
     objects = AuthUserApiManager()
     
