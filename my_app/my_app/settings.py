@@ -43,6 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
+PASSWORD_HASHERS = [
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher"
+]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -127,4 +131,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-JWT_SECRET = 'secret'
+JWT_SECRET=os.getenv("JWT_SECRET", "")
