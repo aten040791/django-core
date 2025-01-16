@@ -10,9 +10,11 @@ from ..decorators.authorization import have_permission
 from modules.core.response.JsonResponseUtil import JsonResponseUtil
 
 
-def all():
+def all(request):
     events = Event.objects.all()
-    print(events)
+    return JsonResponseUtil.Success({
+        'events': list(events.values())
+    })
     
 def show(request, event_id):
     try: 
