@@ -34,6 +34,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'modules.core.apps.CoreConfig',
     'modules.event_management.apps.EventManagementConfig',
     # 'django.contrib.admin',
     # 'django.contrib.auth',

@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password, make_password
+from .auth_permission import Permission
 
 class AuthUserApiManager(models.Manager):
     def authenticate(self, email, password):
@@ -16,6 +17,7 @@ class AuthUserApi(models.Model):
     id = models.AutoField(primary_key=True)
     email = models.EmailField(max_length=150, null=False, unique=True)
     password = models.CharField(max_length=100, null=False)
+    permissions = models.ManyToManyField(Permission, db_table='auth_user_permission', related_name='permissions')
     objects = AuthUserApiManager()
     
     class Meta:
