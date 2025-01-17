@@ -1,4 +1,3 @@
-from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.forms.models import model_to_dict
 import json
@@ -8,12 +7,19 @@ from django.views.decorators.http import require_http_methods
 from django.core.files.storage import FileSystemStorage
 from ..decorators.authorization import have_permission
 from modules.core.response.JsonResponseUtil import JsonResponseUtil
-
+from django.core.cache import cache
+from modules.core.redis.redis import redis
 
 def all(request):
     events = Event.objects.all()
+    if cache.has_key('events', None): 
+        events = cache.get('events', None)
+    else:
+        events = list(events.values())
+        # key, value, timeout, no version
+        cache.set('events', events, 20, None)
     return JsonResponseUtil.Success({
-        'events': list(events.values())
+        'events': events
     })
     
 def show(request, event_id):
@@ -34,9 +40,14 @@ def show_querystring(request):
         event = Event.objects.get(event_id=event_id)
         cover_image = event.cover_image.name
         # Chuyển sang dạng dict (key:value)
-        event = model_to_dict(event, exclude=['cover_image'])
-        event['cover_image'] = cover_image
-        return JsonResponseUtil.Success({'event': event})
+        event_dict = model_to_dict(event, exclude=['cover_image'])
+        event_dict['cover_image'] = event.cover_image.url
+        # event['start_date'] = event.
+        # Store using native redis
+        # redis.set('event:'+ str(event['event_id']), json.dumps(event))
+        # item = redis.get('event:6')
+        # print(json.loads(item))
+        return JsonResponseUtil.Success({'event': event_dict})
     except Event.DoesNotExist:
         return JsonResponseUtil.NotFound()
     
