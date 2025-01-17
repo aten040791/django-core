@@ -31,16 +31,15 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
-    # 'modules.core.apps.CoreConfig',
+    'modules.core.apps.CoreConfig',
     'modules.event_management.apps.EventManagementConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    # 'corsheaders',
+    # 'django.contrib.admin',
+    # 'django.contrib.auth',
+    # 'django.contrib.contenttypes',
+    'corsheaders',
     'django.contrib.sessions',
     'django.contrib.messages',
     # 'django.contrib.staticfiles',
@@ -56,11 +55,12 @@ CUSTOM_MIDDLEWARE = load_middlewares(MODULE_BASE_DIR)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ] + CUSTOM_MIDDLEWARE
 
 MIGRATION_MODULES = {
@@ -86,7 +86,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'my_app.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -120,6 +119,17 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CACHES = {
+    "default": {
+        "BACKEND": 'django.core.cache.backends.redis.RedisCache',
+        "LOCATION": 'redis://{0}:{1}'.format(os.getenv('REDIS_HOST'), os.getenv('REDIS_PORT')),
+        'KEY_PREFIX': 'myapp'
+    }
+}
+
+REDIS_HOST = os.getenv('REDIS_HOST', 'XXX')
+REDIS_PORT = os.getenv('REDIS_PORT', 'XXX')
 
 
 # Internationalization
