@@ -1,5 +1,4 @@
 from django.utils.deprecation import MiddlewareMixin
-from django.http import JsonResponse
 from core.response.JsonResponseUtil import JsonResponseUtil
 from core.auth.JWTUtil import JWTUtil
 import jwt
