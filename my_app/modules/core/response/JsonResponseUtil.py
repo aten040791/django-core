@@ -12,6 +12,15 @@ class JsonResponseUtil(JsonResponse):
         }, status=404)
     
     @staticmethod
+    def Unauthenticated(message = 'Unauthenticated'):
+        return JsonResponse({
+            'success': False,
+            'data': None,
+            'status': 401,
+            'message': message
+        }, status=401)
+    
+    @staticmethod
     def Unauthorized(message = 'Unauthorized'):
         return JsonResponse({
             'success': False,
@@ -21,7 +30,7 @@ class JsonResponseUtil(JsonResponse):
         }, status=403)
     
     @staticmethod
-    def Success(data_as_dict, message = 'ok'):
+    def Success(data_as_dict, message = 'Ok'):
         return JsonResponse({
             'success': True,
             'data': data_as_dict,

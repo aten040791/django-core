@@ -31,7 +31,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
 # Application definition
 
 INSTALLED_APPS = [
@@ -87,7 +86,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'my_app.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
@@ -120,6 +118,17 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+CACHES = {
+    "default": {
+        "BACKEND": 'django.core.cache.backends.redis.RedisCache',
+        "LOCATION": 'redis://{0}:{1}'.format(os.getenv('REDIS_HOST'), os.getenv('REDIS_PORT')),
+        'KEY_PREFIX': 'myapp'
+    }
+}
+
+REDIS_HOST = os.getenv('REDIS_HOST', 'XXX')
+REDIS_PORT = os.getenv('REDIS_PORT', 'XXX')
 
 
 # Internationalization
