@@ -38,15 +38,16 @@ def show_querystring(request):
     event_id = request.GET.get('event_id', 'default_value')
     try: 
         event = Event.objects.get(event_id=event_id)
-        cover_image = event.cover_image.name
         # Chuyển sang dạng dict (key:value)
         event_dict = model_to_dict(event, exclude=['cover_image'])
         event_dict['cover_image'] = event.cover_image.url
-        # event['start_date'] = event.
-        # Store using native redis
-        # redis.set('event:'+ str(event['event_id']), json.dumps(event))
-        # item = redis.get('event:6')
-        # print(json.loads(item))
+        event_dict['start_date'] = event.start_date.isoformat()
+        event_dict['end_date'] = event.end_date.isoformat()
+        # Store using native redis, json.dumps == JSON.stringify(obj)
+        redis.set('event:'+ str(event_id), json.dumps(event_dict))
+        # Demo printing with using decode to decode byte to string and convert to dict using json.loads
+        # event_after_decode = redis.get('event:'+str(event_id)).decode()
+        # print(json.loads(event_after_decode)['event_id'])
         return JsonResponseUtil.Success({'event': event_dict})
     except Event.DoesNotExist:
         return JsonResponseUtil.NotFound()

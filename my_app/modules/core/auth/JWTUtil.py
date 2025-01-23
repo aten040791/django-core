@@ -1,11 +1,12 @@
 import jwt
 import datetime
 from my_app.settings import SECRET_KEY
+from django.utils.timezone import now
 
 class JWTUtil:
     @staticmethod
     def encode(data, milliseconds):
-        current_time = datetime.datetime.now()
+        current_time = now()
         payload = {
             'data': data,
             'iat': current_time,
@@ -15,4 +16,4 @@ class JWTUtil:
     
     @staticmethod
     def decode(token):
-        return jwt.decode(jwt=token, algorithms='HS256')
+        return jwt.decode(jwt=token, key=SECRET_KEY, algorithms='HS256')
