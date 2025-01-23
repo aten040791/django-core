@@ -8,12 +8,11 @@ def have_permission():
     def decorator(view_func):
         def _wrapped_view(request, *args, **kwargs):
             try:
-                authorization = request.headers['Authorization']
+                authorization = request.headers.get('Authorization')
                 if authorization and authorization.startswith('Bearer '):
                     access_token = authorization.split(' ')[1]  # Extract token after "Bearer "
                     # decode access token
                     data = JWTUtil.decode(token=access_token)
-                    
                     user_id = data['data']['id']
                     permission_ids = list(api_user.AuthUserApi.objects.get(id = user_id).permissions.all().values_list('id', flat=True))
                     # Get current log path and method call
@@ -27,10 +26,12 @@ def have_permission():
                         return JsonResponseUtil.NotFound()
                     # Check path against permission
                     response = view_func(request, *args, **kwargs)
-                    return response  # Ensure an HttpResponse is returned
+                    return response  # Ensure an HttpResponse is returned                    
             except (api_user.AuthUserApi.DoesNotExist, auth_permission.Permission.DoesNotExist):
                 return JsonResponseUtil.NotFound()
             except jwt.ExpiredSignatureError:
                 return JsonResponseUtil.Unauthorized('Token expired')
+            except jwt.InvalidSignatureError:
+                return JsonResponseUtil.Unauthorized('Invalid signature')
         return _wrapped_view
     return decorator

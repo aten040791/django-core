@@ -1,8 +1,7 @@
 from django.http import JsonResponse
-import jwt, json
+import json
 from ..forms.auth_form import AuthLoginForm, AuthRegisterForm
 from my_app import settings
-import datetime
 from ..models import AuthUserApi
 from modules.core.response.JsonResponseUtil import JsonResponseUtil
 from modules.core.auth.JWTUtil import JWTUtil
