@@ -58,3 +58,21 @@ class JsonResponseUtil(JsonResponse):
             'message': message
         }, status=522)
     
+    @staticmethod
+    def Error(message='Failed'):
+        return JsonResponse({
+            'success': False,
+            'data': None,
+            'status': 400,
+            'message': message
+        }, status=400)
+    
+    @staticmethod
+    def AlreadyExist(message='Entity already exists'):
+        return JsonResponse({
+            'success': False,
+            'data': None,
+            'status': 400,
+            'message': message
+        }, status=400)
+    

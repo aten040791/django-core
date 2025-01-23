@@ -5,6 +5,9 @@ from my_app import settings
 from ..models import AuthUserApi
 from modules.core.response.JsonResponseUtil import JsonResponseUtil
 from modules.core.auth.JWTUtil import JWTUtil
+from modules.core.controllers.email_controller import send_email
+import datetime
+from ..helpers.generate_qr_code import generate
 
 def login(request):
     form = AuthLoginForm(json.loads(request.body))  
@@ -28,7 +31,17 @@ def login(request):
                 'id': user.id,
                 'email': user.email
             }, 7 * 24 * 3600 * 1000) # 7 days
-        
+        context_email = {
+            'to_email': user.email,
+            'subject': "[Django Core] Login Successfully",
+            'attachments': {},
+            'name': user.email,
+            'time': datetime.datetime.now()
+        }
+        qr = generate({
+            'email': user.email
+        })
+        send_email('qr_join_event.html', context_email)
         return JsonResponseUtil.Success({
                 'access_token': jwt_access_token,
                 'refresh_token': jwt_refresh_token,

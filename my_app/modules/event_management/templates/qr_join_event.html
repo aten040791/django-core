@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR tham dự sự kiện</title>
+</head>
+<body>
+<div class="main-container">
+    <div class="container">
+        <div class="header">
+            <h1>Dưới đây là mã QR để tham dự sự kiện {{event_name}} của bạn</h1>
+            <small>Lưu ý: Không được tiết lộ mã QR cho người khác!</small>
+        </div>
+        <div class="content">
+            <div class="qr-code">
+                <img src=`{{qr_code}}`>
+            </div>
+            <div>Chúc các bạn tận hưởng trọn vẹn sự kiện!</div>
+        </div>
+        <div class="footer">
+            <p>Mọi thông tin chi tiết vui lòng liên hệ: <a mailto:info@vccorp.vn>info@vccorp.vn</a></p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

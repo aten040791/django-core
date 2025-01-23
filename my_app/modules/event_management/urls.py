@@ -1,5 +1,5 @@
 from django.urls import path
-from .controllers import auth_controller, event_controller
+from .controllers import auth_controller, event_controller, participant_controller
 
 
 urlpatterns = [
@@ -12,5 +12,6 @@ urlpatterns = [
     path('api/events/store_fillable', event_controller.store_fillable),
     path('api/events/<int:event_id>/update', event_controller.update),
     path('api/events/<int:event_id>/delete', event_controller.delete),
-    path('api/events/<int:event_id>/relationship', event_controller.show_with_relationship)
+    path('api/events/<int:event_id>/relationship', event_controller.show_with_relationship),
+    path('api/participant/register_event', participant_controller.register_event)
 ]

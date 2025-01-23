@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from dotenv import load_dotenv
 from .helpers.middlewares_loader import load_middlewares
+import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -34,12 +35,12 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    # 'modules.core.apps.CoreConfig',
+    'modules.core.apps.CoreConfig',
     'modules.event_management.apps.EventManagementConfig',
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    # 'corsheaders',
+    # 'django.contrib.admin',
+    # 'django.contrib.auth',
+    # 'django.contrib.contenttypes',
+    'corsheaders',
     'django.contrib.sessions',
     'django.contrib.messages',
     # 'django.contrib.staticfiles',
@@ -55,11 +56,12 @@ CUSTOM_MIDDLEWARE = load_middlewares(MODULE_BASE_DIR)
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
+    # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware'
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ] + CUSTOM_MIDDLEWARE
 
 MIGRATION_MODULES = {
@@ -71,7 +73,7 @@ ROOT_URLCONF = 'my_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -129,6 +131,15 @@ CACHES = {
 
 REDIS_HOST = os.getenv('REDIS_HOST', 'XXX')
 REDIS_PORT = os.getenv('REDIS_PORT', 'XXX')
+
+EMAIL_ENABLE = os.getenv('EMAIL_ENABLE', False)
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'XXX')
+EMAIL_PORT = os.getenv('EMAIL_PORT', 'XXX')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False)
+EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', False)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'XXX')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'XXX')
+
 
 
 # Internationalization
