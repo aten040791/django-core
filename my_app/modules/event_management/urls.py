@@ -14,7 +14,7 @@ urlpatterns = [
     path('api/events/<int:event_id>/delete', event_controller.delete),
     path('api/events/<int:event_id>/relationship', event_controller.show_with_relationship),
     path('api/participant/', participant_controller.all),
-    path('api/participant/create', participant_controller.create),
+    path('api/participant/store', participant_controller.store),
     path('api/participant/<int:participant_id>', participant_controller.show),
     path('api/participant/<int:participant_id>/delete', participant_controller.delete),
     path('api/participant/<int:participant_id>/update', participant_controller.update),
