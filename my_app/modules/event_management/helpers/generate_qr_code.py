@@ -2,7 +2,7 @@ import qrcode
 from django.core.files.storage import FileSystemStorage
 from io import BytesIO
 
-def generate(data, size=10, border=4):
+def generate(request, data, size=10, border=4):
     qr = qrcode.QRCode(
         version=None,
         error_correction=qrcode.constants.ERROR_CORRECT_L,
@@ -19,4 +19,6 @@ def generate(data, size=10, border=4):
     qr_buffer.seek(0)
     file_storage = FileSystemStorage(location='modules/event_management/storage/event_qr_codes', base_url='event_management/event_qr_codes')
     file_storage.save(img_name, qr_buffer)
-    return img_name
+    relative_url = file_storage.url(img_name)
+    absolute_url = request.build_absolute_uri(relative_url)
+    return img_name, absolute_url

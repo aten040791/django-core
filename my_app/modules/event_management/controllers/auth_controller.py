@@ -38,9 +38,11 @@ def login(request):
             'name': user.email,
             'time': datetime.datetime.now()
         }
-        qr = generate({
+        img_name, qr_url = generate(request, {
             'email': user.email
         })
+        context_email['qr_url'] = qr_url
+        print("QRCODE", qr_url)
         send_email('qr_join_event.html', context_email)
         return JsonResponseUtil.Success({
                 'access_token': jwt_access_token,

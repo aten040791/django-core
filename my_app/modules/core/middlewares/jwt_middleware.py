@@ -3,6 +3,7 @@ from core.response.JsonResponseUtil import JsonResponseUtil
 from core.auth.JWTUtil import JWTUtil
 import jwt
 import json
+from ...event_management.controllers.user_controller import getById
 
 class JWTMiddleware(MiddlewareMixin):
     def process_view(self, request, view_func, view_args, view_kwargs):
@@ -13,7 +14,6 @@ class JWTMiddleware(MiddlewareMixin):
             return JsonResponseUtil.Unauthorized()
         try:
             jwt_token = jwt_token.split(" ")[1]
-            from ...event_management.controllers.user_controller import getById
             payload = JWTUtil.decode(jwt_token)
             user_id = payload['data']['id']
             user_response = getById(request, user_id)

@@ -11,15 +11,13 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv
-from .helpers.middlewares_loader import load_middlewares
+from dotenv import load_dotenv  
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_PATH = os.path.join(BASE_DIR, '.env')
 load_dotenv(ENV_PATH)
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -51,8 +49,10 @@ PASSWORD_HASHERS = [
 ]
 
 # handle import all middlewares
-MODULE_BASE_DIR = os.path.join(os.path.dirname(__file__), '..', 'modules')
-CUSTOM_MIDDLEWARE = load_middlewares(MODULE_BASE_DIR)
+
+CUSTOM_MIDDLEWARE = [
+    # 'modules.core.middlewares.jwt_middleware.JWTMiddleware'
+]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -61,7 +61,7 @@ MIDDLEWARE = [
     # 'django.middleware.csrf.CsrfViewMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ] + CUSTOM_MIDDLEWARE
 
 MIGRATION_MODULES = {
@@ -136,11 +136,8 @@ EMAIL_ENABLE = os.getenv('EMAIL_ENABLE', False)
 EMAIL_HOST = os.getenv('EMAIL_HOST', 'XXX')
 EMAIL_PORT = os.getenv('EMAIL_PORT', 'XXX')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False)
-EMAIL_USE_SSL = os.getenv('EMAIL_USE_SSL', False)
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'XXX')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'XXX')
-
-
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
