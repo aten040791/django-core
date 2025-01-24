@@ -3,6 +3,31 @@ from django.views.decorators.csrf import csrf_exempt
 from ..models import EventParticipant, Event, Participant
 from django.shortcuts import get_object_or_404
 from modules.core.response.JsonResponseUtil import JsonResponseUtil
+from django.core.cache import cache
+from modules.core.redis.redis import redis
+
+def all(request):
+    participants = Participant.objects.all()
+    if cache.has_key('participants', None): 
+        participants = cache.get('participants', None)
+    else:
+        participants = list(participants.values())
+        cache.set('participants', participants, 20, None)
+    return JsonResponseUtil.Success({
+        'participants': participants
+    })
+
+def create():
+    print("")
+
+def delete():
+    print("")
+
+def update():
+    print("")
+
+def show():
+    print("")
 
 @require_http_methods(["POST"])
 @csrf_exempt
