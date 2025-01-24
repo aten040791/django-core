@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import os
 from dotenv import load_dotenv  
 import os
+import ast
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -138,6 +139,18 @@ EMAIL_PORT = os.getenv('EMAIL_PORT', 'XXX')
 EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False)
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'XXX')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'XXX')
+# Keep connection to email server
+EMAIL_USE_CONNECTION_POOL = os.getenv('EMAIL_USE_CONNECTION_POOL', False)
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'XXX')
+CELERY_ACCEPT_CONTENT = ast.literal_eval(os.getenv('CELERY_ACCEPT_CONTENT', 'XXX'))
+CELERY_TASK_SERIALIZER = os.getenv('CELERY_TASK_SERIALIZER', 'XXX')
+CELERY_RESULT_SERIALIZER = os.getenv('CELERY_RESULT_SERIALIZER', 'XXX')
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = os.getenv('CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP', False)
+
+CELERY_TASK_ROUTES = {
+    'tasks.email.send_mail_event': {'queue': 'email_queue'}
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/
