@@ -1,10 +1,9 @@
 
-from modules.core.response.JsonResponseUtil import JsonResponseUtil
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from my_app import settings
 
-CHUNK_SIZE=50
+CHUNK_SIZE = 50
 
 def send_email(html_template, context):
     from_email = settings.EMAIL_HOST_USER
@@ -14,7 +13,7 @@ def send_email(html_template, context):
     bcc = context.get('bcc')
     attachments = context.get('attachments')
     if not to_email:
-        return JsonResponseUtil.Error()
+        return False
     if not isinstance(to_email, list):
         to_email = [to_email]
     try:
@@ -37,8 +36,9 @@ def send_email(html_template, context):
         else: 
             result = message.send()
         if result:
-            return JsonResponseUtil.Success({})
+            return True
         else:
-            return JsonResponseUtil.Error()
+            return False
     except Exception as e:
-        return JsonResponseUtil.Error(e)
+        print("OIGIANGOI", e)
+        return False

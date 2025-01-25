@@ -9,8 +9,8 @@ class ParticipantMapper:
             full_name=participant.full_name,
             email=participant.email,
             events=[
-                {"id": event.id, "name": event.name}
-                for event in participant.events.all()
+                {"id": ep.event.event_id, "name": ep.event.event_name}
+                for ep in participant.events.select_related('event').all()
             ]
         )
         return dto.to_with_relationship()

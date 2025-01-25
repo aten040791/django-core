@@ -1,7 +1,6 @@
 from django.views.decorators.http import require_http_methods
 from django.views.decorators.csrf import csrf_exempt
 from ..models import EventParticipant, Event, Participant
-from django.shortcuts import get_object_or_404
 from modules.core.response.JsonResponseUtil import JsonResponseUtil
 from django.core.cache import cache
 from modules.core.redis.redis import redis
@@ -11,6 +10,9 @@ from ..forms.participant_form import ParticipantForm
 from ..mappers.participant_mapper import ParticipantMapper
 import json
 from ..helpers.generate_qr_code import generate
+from modules.core.helpers.email_helper import send_email
+from ..tasks.email.send_mail_event import task_qr_join_event
+from datetime import datetime, timedelta, timezone
 
 def all(request):
     participants = Participant.objects.all()
@@ -52,7 +54,8 @@ def delete(request, participant_id):
 @csrf_exempt
 def update(request, participant_id):
     try:
-        participant_instance = Participant.objects.get(participant_id = participant_id)
+        participant_instance = Participant.objects.get(participant_id=participant_id)
+        print("participant", participant_instance)
         form = ParticipantForm(json.loads(request.body), instance=participant_instance)
         if form.is_valid():
             form.save()
@@ -93,7 +96,32 @@ def register_event(request):
             participant=participant,
             qr_code=qr_url
         )
-
-        return JsonResponseUtil.Success(body)
+        #send email confirm
+        context_email_confirm = {
+            'to_email': participant.email,
+            'subject': "[Event Management] XÁC NHẬN ĐĂNG KÍ SỰ KIỆN",
+            'attachments': {},
+            'user_name': participant.full_name,
+            'event_name': event.event_name,
+            'event_start_date': event.start_date.strftime('%Y-%m-%d %H:%M:%S')
+        }
+        #send email confirm
+        context_email_qr = {
+            'to_email': participant.email,
+            'subject': "[Event Management] QR Code tham dự sự kiện",
+            'attachments': {},
+            'user_name': participant.full_name,
+            'event_name': event.event_name,
+            'qr_url': qr_url
+        }
+        run_at = datetime.now() + timedelta(minutes=1)
+        print("RUN AT", run_at)
+        send_email('confirm_event_subcribe.html', context_email_confirm)
+        task_qr_join_event.apply_async(
+            args=['qr_join_event.html', context_email_qr],
+            eta=run_at
+        )
+        participant_dto = ParticipantMapper.to_dto(participant)
+        return JsonResponseUtil.Success(participant_dto)
     except Exception as e: 
-        return JsonResponseUtil.Error()
+        return JsonResponseUtil.Error(message=e)

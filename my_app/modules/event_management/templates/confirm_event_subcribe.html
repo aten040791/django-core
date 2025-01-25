@@ -8,9 +8,11 @@
 <body>
 <div class="main-container">
     <div class="container">
+        <h1>Chào, {{ user_name }}</h1>
         <div class="content">
-            Bạn đã đăng kí tham gia sự kiện {{event_name}} thành công!
+            Bạn đã đăng kí tham gia sự kiện {{ event_name }} thành công!
         </div>
+        <small>Sự kiện diễn ra vào lúc: {{ event_start_date }}, rất mong được gặp bạn</small>
         <div class="footer">
             <p>Mọi thông tin chi tiết vui lòng liên hệ: <a mailto:info@vccorp.vn>info@vccorp.vn</a></p>
         </div>

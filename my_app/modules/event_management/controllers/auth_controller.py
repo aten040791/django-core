@@ -1,13 +1,8 @@
-from django.http import JsonResponse
 import json
 from ..forms.auth_form import AuthLoginForm, AuthRegisterForm
-from my_app import settings
 from ..models import AuthUserApi
 from modules.core.response.JsonResponseUtil import JsonResponseUtil
 from modules.core.auth.JWTUtil import JWTUtil
-from modules.core.controllers.email_controller import send_email
-import datetime
-from ..tasks.email.send_mail_event import task_send_mail_event
 
 def login(request):
     form = AuthLoginForm(json.loads(request.body))  
@@ -31,17 +26,6 @@ def login(request):
                 'id': user.id,
                 'email': user.email
             }, 7 * 24 * 3600 * 1000) # 7 days
-        context_email = {
-            'to_email': user.email,
-            'subject': "[Django Core] Login Successfully",
-            'attachments': {},
-            'name': user.email,
-            'time': datetime.datetime.now().strftime('%H:%M:%S %d-%m-%Y')
-        }
-        task_send_mail_event.apply_async(
-            args=['login.html', context_email],
-            countdown=30
-        )
         return JsonResponseUtil.Success({
                 'access_token': jwt_access_token,
                 'refresh_token': jwt_refresh_token,
