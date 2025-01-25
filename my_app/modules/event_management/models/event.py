@@ -9,7 +9,9 @@ class Event(models.Model):
     end_date = models.DateTimeField()  # End date
     cover_image = models.ImageField(upload_to='modules/event_management/storage/event_covers/', blank=True, null=True)  # Cover image (optional)
     cover_disk_storage=models.CharField(max_length=20, null=False, default="local")
-        
+    capacity = models.IntegerField(default=0)
+    empty_slot = models.IntegerField(default=0)
+
     class Meta:
         db_table='events' 
     

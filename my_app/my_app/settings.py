@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     # 'django.contrib.staticfiles',
+    'django_crontab',
 ]
 
 PASSWORD_HASHERS = [
@@ -148,10 +149,15 @@ CELERY_TASK_SERIALIZER = os.getenv('CELERY_TASK_SERIALIZER', 'XXX')
 CELERY_RESULT_SERIALIZER = os.getenv('CELERY_RESULT_SERIALIZER', 'XXX')
 CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = os.getenv('CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP', False)
 CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE', 'Asia/Ho_Chi_Minh')
+CELERY_CREATE_MISSING_QUEUES = os.getenv('CELERY_CREATE_MISSING_QUEUES', False)
 
 CELERY_TASK_ROUTES = {
-    'tasks.email.send_mail_event': {'queue': 'email_queue'}
 }
+
+# TODO
+CRONJOBS = [
+    ('/1 * * * *', 'modules.event_management.crons.email.send_mail_reminder')
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

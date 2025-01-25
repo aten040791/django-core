@@ -1,9 +1,6 @@
-
 from django.template.loader import render_to_string
 from django.core.mail import EmailMessage
 from my_app import settings
-
-CHUNK_SIZE = 50
 
 def send_email(html_template, context):
     from_email = settings.EMAIL_HOST_USER
@@ -28,17 +25,9 @@ def send_email(html_template, context):
             attachments=attachments
         )
         message.content_subtype='html'
-        if len(to_email) > CHUNK_SIZE:
-            for i in range(0, len(to_email), CHUNK_SIZE):
-                chunk = to_email[i:i + CHUNK_SIZE]
-                message.to = chunk
-                result = message.send()
-        else: 
-            result = message.send()
-        if result:
-            return True
-        else:
+        result = message.send()
+        if not result:
             return False
+        return True
     except Exception as e:
-        print("OIGIANGOI", e)
         return False
