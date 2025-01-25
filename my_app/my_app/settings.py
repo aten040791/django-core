@@ -11,14 +11,14 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
-from dotenv import load_dotenv
-from .helpers.middlewares_loader import load_middlewares
+from dotenv import load_dotenv  
+import os
+import ast
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ENV_PATH = os.path.join(BASE_DIR, '.env')
 load_dotenv(ENV_PATH)
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     # 'django.contrib.staticfiles',
+    'django_crontab',
 ]
 
 PASSWORD_HASHERS = [
@@ -50,8 +51,10 @@ PASSWORD_HASHERS = [
 ]
 
 # handle import all middlewares
-MODULE_BASE_DIR = os.path.join(os.path.dirname(__file__), '..', 'modules')
-CUSTOM_MIDDLEWARE = load_middlewares(MODULE_BASE_DIR)
+
+CUSTOM_MIDDLEWARE = [
+    # 'modules.core.middlewares.jwt_middleware.JWTMiddleware'
+]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -60,7 +63,7 @@ MIDDLEWARE = [
     # 'django.middleware.csrf.CsrfViewMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.clickjacking.XFrameOptionsMiddleware'
 ] + CUSTOM_MIDDLEWARE
 
 MIGRATION_MODULES = {
@@ -72,7 +75,7 @@ ROOT_URLCONF = 'my_app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -131,6 +134,30 @@ CACHES = {
 REDIS_HOST = os.getenv('REDIS_HOST', 'XXX')
 REDIS_PORT = os.getenv('REDIS_PORT', 'XXX')
 
+EMAIL_ENABLE = os.getenv('EMAIL_ENABLE', False)
+EMAIL_HOST = os.getenv('EMAIL_HOST', 'XXX')
+EMAIL_PORT = os.getenv('EMAIL_PORT', 'XXX')
+EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS', False)
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER', 'XXX')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD', 'XXX')
+# Keep connection to email server
+EMAIL_USE_CONNECTION_POOL = os.getenv('EMAIL_USE_CONNECTION_POOL', False)
+
+CELERY_BROKER_URL = os.getenv('CELERY_BROKER_URL', 'XXX')
+CELERY_ACCEPT_CONTENT = ast.literal_eval(os.getenv('CELERY_ACCEPT_CONTENT', 'XXX'))
+CELERY_TASK_SERIALIZER = os.getenv('CELERY_TASK_SERIALIZER', 'XXX')
+CELERY_RESULT_SERIALIZER = os.getenv('CELERY_RESULT_SERIALIZER', 'XXX')
+CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = os.getenv('CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP', False)
+CELERY_TIMEZONE = os.getenv('CELERY_TIMEZONE', 'Asia/Ho_Chi_Minh')
+CELERY_CREATE_MISSING_QUEUES = os.getenv('CELERY_CREATE_MISSING_QUEUES', False)
+
+CELERY_TASK_ROUTES = {
+}
+
+# TODO
+CRONJOBS = [
+    ('/1 * * * *', 'modules.event_management.crons.email.send_mail_reminder')
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

@@ -7,7 +7,7 @@ class EventForm(forms.ModelForm):
     class Meta:
         model = Event
         # fiilable
-        fields = ['event_name', 'start_date', 'end_date', 'cover_image']
+        fields = ['event_name', 'start_date', 'end_date', 'cover_image', 'capacity']
     
     # available rule:
     # event_name = forms.URLField()
@@ -17,6 +17,12 @@ class EventForm(forms.ModelForm):
         if len(event_name) < 3:
             raise forms.ValidationError('message.custom')
         return event_name
+    
+    def clean_capacity(self):
+        capacity = self.cleaned_data.get('capacity')
+        if capacity == 0:
+            raise forms.ValidationError('Invalid capacity')
+        return capacity
     
     def clean_end_date(self):
         end_date = self.cleaned_data.get('end_date')

@@ -78,7 +78,8 @@ def store(request):
         event_name= body.get('event_name'), 
         start_date=body.get('start_date'), 
         end_date=body.get('end_date'), 
-        cover_image= cover_image.name
+        cover_image= cover_image.name,
+        capacity=body.get('capacity')
     )
     event_dict = model_to_dict(event, exclude=['cover_image'])
     # Get storage url
